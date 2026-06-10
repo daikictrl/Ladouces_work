@@ -1,0 +1,72 @@
+<h2>Seat Color Differentiation Options</h2>
+<p class="subtitle">The current issue: <strong>Available</strong> (light blue) and <strong>Occupied</strong> (light gray) look nearly identical at a glance. Pick the approach you prefer.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>High Contrast — Clear States</h3>
+      <div style="display:flex;gap:12px;margin:12px 0;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#ffffff;border:2px solid #2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#2563eb;box-shadow:0 1px 3px rgba(37,99,235,0.15)">3A</div>
+          <span style="font-size:11px;color:#2563eb;font-weight:600">Available</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#2563eb;border:2px solid #2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#ffffff;box-shadow:0 2px 8px rgba(37,99,235,0.3)">4B</div>
+          <span style="font-size:11px;color:#2563eb;font-weight:600">Selected</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#f1f5f9;border:2px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#94a3b8;text-decoration:line-through">7C</div>
+          <span style="font-size:11px;color:#94a3b8;font-weight:500">Occupied</span>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:13px;margin:0"><strong>Available</strong> = white bg + strong blue border. <strong>Selected</strong> = solid blue (matches app primary). <strong>Occupied</strong> = muted gray + strikethrough text. Maximum visual separation.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Green Accent System</h3>
+      <div style="display:flex;gap:12px;margin:12px 0;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#f0fdf4;border:2px solid #86efac;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#16a34a">3A</div>
+          <span style="font-size:11px;color:#16a34a;font-weight:600">Available</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#7c3aed;border:2px solid #7c3aed;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#ffffff;box-shadow:0 2px 8px rgba(124,58,237,0.3)">4B</div>
+          <span style="font-size:11px;color:#7c3aed;font-weight:600">Selected</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#fef2f2;border:2px solid #fecaca;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#dc2626">7C</div>
+          <span style="font-size:11px;color:#dc2626;font-weight:500">Occupied</span>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:13px;margin:0"><strong>Available</strong> = green tint (inviting, positive). <strong>Selected</strong> = purple (keeps your current accent). <strong>Occupied</strong> = red tint (clearly blocked). Uses semantic color psychology.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Light/Dark Contrast — Minimalist</h3>
+      <div style="display:flex;gap:12px;margin:12px 0;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#ffffff;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#0f172a">3A</div>
+          <span style="font-size:11px;color:#64748b;font-weight:600">Available</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#0f172a;border:2px solid #0f172a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#ffffff;box-shadow:0 2px 8px rgba(0,0,0,0.2)">4B</div>
+          <span style="font-size:11px;color:#0f172a;font-weight:600">Selected</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:52px;height:52px;border-radius:12px;background:#f1f5f9;border:2px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:400;color:#cbd5e1">7C</div>
+          <span style="font-size:11px;color:#cbd5e1;font-weight:500">Occupied</span>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:13px;margin:0"><strong>Available</strong> = white + subtle border (clean, open). <strong>Selected</strong> = solid dark (bold, premium). <strong>Occupied</strong> = extremely faded, text barely visible. Minimalist luxury feel.</p>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:20px;color:#94a3b8;font-size:13px">Click an option to select it, then tell me in the terminal what you think.</p>

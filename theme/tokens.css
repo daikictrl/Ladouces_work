@@ -1,0 +1,14 @@
+@theme {
+  --color-primary: #2563eb;
+  --color-accent: #9333ea;
+  --color-success: #16a34a;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+
+  --font-sans: "Poppins-Regular", "sans-serif";
+  --font-medium: "Poppins-Medium", "sans-serif";
+  --font-semibold: "Poppins-SemiBold", "sans-serif";
+  --font-bold: "Poppins-Bold", "sans-serif";
+  --font-heading: "Poppins-Bold", "sans-serif";
+}
