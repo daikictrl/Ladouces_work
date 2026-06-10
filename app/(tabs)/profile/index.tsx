@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useClerk, useUser } from "@clerk/expo";
+import * as Notifications from "expo-notifications";
 import { useTicketStore } from "../../../stores/ticketStore";
 import { View, Text, Pressable, ScrollView, TextInput } from "../../../components/tw";
 import BottomSheet from "../../../components/ui/BottomSheet";
@@ -56,6 +57,60 @@ export default function ProfileIndex() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Notifications Diagnostics State
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
+  const [scheduledNotifications, setScheduledNotifications] = useState<any[]>([]);
+  const [scheduledCount, setScheduledCount] = useState(0);
+
+  const loadDiagnostics = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      setPermissionStatus(status);
+      const list = await Notifications.getAllScheduledNotificationsAsync();
+      setScheduledNotifications(list);
+      setScheduledCount(list.length);
+    } catch (e: any) {
+      console.warn("Failed to load diagnostics:", e);
+    }
+  };
+
+  useEffect(() => {
+    if (diagnosticsOpen) {
+      loadDiagnostics();
+    }
+  }, [diagnosticsOpen]);
+
+  const handleSendTestNotification = async () => {
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Test Alarm 🔔",
+          body: "This is a local travel reminder test from MOVANA!",
+          data: { test: true },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: 2,
+        },
+      });
+      Alert.alert("Success", "Test notification scheduled to trigger in 2 seconds.");
+      setTimeout(loadDiagnostics, 500);
+    } catch (error: any) {
+      Alert.alert("Error", `Failed to schedule test: ${error?.message || error}`);
+    }
+  };
+
+  const handleClearAllNotifications = async () => {
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      Alert.alert("Success", "All scheduled notifications have been cleared.");
+      loadDiagnostics();
+    } catch (error: any) {
+      Alert.alert("Error", `Failed to clear notifications: ${error?.message || error}`);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -196,6 +251,18 @@ export default function ProfileIndex() {
             router.push("/(tabs)/tickets");
           }}
         />
+
+        <Text className="font-bold text-[12px] tracking-widest text-slate-400 mb-3 ml-2 uppercase mt-6">
+          System & Diagnostics
+        </Text>
+        <MenuItem
+          icon="bug-outline"
+          label="Notification Debugger"
+          subtitle="Test and inspect scheduled alarms"
+          iconColor="#6366f1"
+          iconBg="bg-indigo-50"
+          onPress={() => setDiagnosticsOpen(true)}
+        />
       </ScrollView>
 
       {/* Edit Profile Bottom Sheet */}
@@ -261,6 +328,76 @@ export default function ProfileIndex() {
           }}
           className="mb-2"
         />
+      </BottomSheet>
+
+      {/* Diagnostics Bottom Sheet */}
+      <BottomSheet visible={diagnosticsOpen} onClose={() => setDiagnosticsOpen(false)}>
+        <View className="flex-row justify-between items-center mb-6">
+          <Text className="font-bold text-[20px] text-slate-900">Notification Debugger</Text>
+          <Pressable onPress={() => setDiagnosticsOpen(false)} className="h-8 w-8 items-center justify-center bg-slate-100 rounded-full">
+            <Ionicons name="close" size={20} color="#64748b" />
+          </Pressable>
+        </View>
+
+        <ScrollView className="max-h-96" showsVerticalScrollIndicator={false}>
+          {/* Permission Status */}
+          <View className="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-4">
+            <Text className="font-bold text-slate-700 text-[14px] mb-1">Permission Status</Text>
+            <Text className={`font-semibold text-[16px] ${permissionStatus === "granted" ? "text-emerald-600" : "text-red-500"}`}>
+              {permissionStatus ? permissionStatus.toUpperCase() : "LOADING..."}
+            </Text>
+          </View>
+
+          {/* Test Buttons */}
+          <View className="flex-row gap-3 mb-4">
+            <Button
+              label="Test 2s Alert"
+              onPress={handleSendTestNotification}
+              className="flex-1"
+            />
+            <Button
+              label="Clear All Alarms"
+              variant="secondary"
+              textClassName="text-red-500"
+              onPress={handleClearAllNotifications}
+              className="flex-1"
+            />
+          </View>
+
+          {/* Scheduled List */}
+          <Text className="font-bold text-slate-700 text-[14px] mb-2 ml-1">
+            Active Scheduled Alarms ({scheduledCount})
+          </Text>
+          
+          {scheduledNotifications.length > 0 ? (
+            scheduledNotifications.map((notif: any) => {
+              const trigger = notif.trigger;
+              let triggerDesc = "Unknown trigger";
+              if (trigger && typeof trigger === "object") {
+                if (trigger.seconds !== undefined) {
+                  triggerDesc = `In ${trigger.seconds}s (${trigger.repeats ? "Repeating" : "One-shot"})`;
+                } else if (trigger.type === "timeInterval" || trigger.type === "timeInterval") {
+                  triggerDesc = `In ${trigger.seconds}s`;
+                }
+              }
+              return (
+                <View key={notif.identifier} className="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-2">
+                  <Text className="font-bold text-slate-800 text-[14px]">{notif.content.title || "No Title"}</Text>
+                  <Text className="text-[13px] text-slate-505 text-slate-500 mt-0.5">{notif.content.body || "No Body"}</Text>
+                  <Text className="text-[11px] font-semibold text-indigo-650 text-indigo-600 mt-1">{triggerDesc}</Text>
+                  <Text className="text-[9px] text-slate-400 mt-0.5">ID: {notif.identifier}</Text>
+                </View>
+              );
+            })
+          ) : (
+            <View className="items-center py-6 bg-slate-50 rounded-2xl border border-slate-100">
+              <Ionicons name="notifications-off-outline" size={24} color="#94a3b8" />
+              <Text className="text-[13px] font-bold text-slate-400 mt-2">
+                No active notifications scheduled
+              </Text>
+            </View>
+          )}
+        </ScrollView>
       </BottomSheet>
     </View>
   );

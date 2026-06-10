@@ -2,6 +2,7 @@ import { useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { View, Text, ScrollView } from "../../../components/tw";
 import { useBookingStore } from "../../../stores/bookingStore";
 import { useTicketStore, type Ticket } from "../../../stores/ticketStore";
@@ -20,6 +21,7 @@ function generateTicketId() {
 
 export default function BookSuccess() {
   const router = useRouter();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { user } = useUser();
 
@@ -93,12 +95,17 @@ export default function BookSuccess() {
 
     addTicket(ticket);
     resetBooking();
-    router.replace("/(tabs)/tickets" as any);
+
+    // Clear the book stack (pops success, payment, seats, bus, agency)
+    // so the Book tab resets to its index when the user returns
+    navigation.dispatch(StackActions.popToTop());
+    router.navigate("/(tabs)/tickets" as any);
   };
 
   const handleCancel = () => {
     resetBooking();
-    router.replace("/(tabs)/book");
+    // Pop all screens back to the book index for a clean slate
+    navigation.dispatch(StackActions.popToTop());
   };
 
   return (

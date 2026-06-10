@@ -13,6 +13,7 @@ import { View, Text, Pressable, TextInput } from "../../../components/tw";
 import { Ionicons } from "@expo/vector-icons";
 import { useReminderStore } from "../../../stores/reminderStore";
 import { useTicketStore } from "../../../stores/ticketStore";
+import { parseLocalDate } from "../../../utils/date";
 import { computeProgress, getItemCounts } from "../../../types/reminder";
 import { requestPermissions } from "../../../services/notificationService";
 import Button from "../../../components/ui/Button";
@@ -141,7 +142,7 @@ export default function ReminderDetailScreen() {
 
   const getPickerDate = () => {
     if (!reminder) return new Date();
-    const tDate = new Date(reminder.travelDate);
+    const tDate = parseLocalDate(reminder.travelDate);
     if (tDate.getTime() < Date.now()) {
       return new Date();
     }
@@ -156,7 +157,7 @@ export default function ReminderDetailScreen() {
 
   const getPickerMaxDate = () => {
     if (!reminder) return undefined;
-    const maxDate = new Date(reminder.travelDate);
+    const maxDate = parseLocalDate(reminder.travelDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (maxDate < today) {
@@ -204,7 +205,7 @@ export default function ReminderDetailScreen() {
       }
 
       // Check if alarm is before departure
-      const departureDate = new Date(reminder.travelDate);
+      const departureDate = parseLocalDate(reminder.travelDate);
       const timeParts = reminder.departureTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
       if (timeParts) {
         let hours = parseInt(timeParts[1], 10);
@@ -263,7 +264,7 @@ export default function ReminderDetailScreen() {
     );
   }
 
-  const travelDate = new Date(reminder.travelDate);
+  const travelDate = parseLocalDate(reminder.travelDate);
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     weekday: "short",
     month: "short",

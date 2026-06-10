@@ -2,6 +2,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import type { TripReminder } from "../types/reminder";
+import { parseLocalDate } from "../utils/date";
 
 const CHANNEL_ID = "movana-travel-reminders";
 
@@ -123,7 +124,7 @@ export async function scheduleReminderNotifications(
   if (enabledAlarms.length === 0) return [];
 
   // Parse the departure date + time to calculate difference
-  const departureDate = new Date(reminder.travelDate);
+  const departureDate = parseLocalDate(reminder.travelDate);
   const timeParts = reminder.departureTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
   if (timeParts) {
     let hours = parseInt(timeParts[1], 10);

@@ -136,6 +136,24 @@ export default function BookBus() {
         price: basePrice + 1200,
         busClass: "VIP",
       },
+      {
+        id: "b7",
+        departure: "22:00",
+        arrival: "02:20",
+        duration: "4h 20m",
+        seatsAvailable: 10,
+        price: basePrice + 1100,
+        busClass: "Express",
+      },
+      {
+        id: "b8",
+        departure: "00:00",
+        arrival: "04:20",
+        duration: "4h 20m",
+        seatsAvailable: 15,
+        price: basePrice + 1300,
+        busClass: "VIP",
+      },
     ];
   }, [selectedAgency]);
 

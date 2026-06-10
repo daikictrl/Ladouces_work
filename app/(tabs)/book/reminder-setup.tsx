@@ -8,11 +8,13 @@ import {
   Switch,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, Pressable, TextInput } from "../../../components/tw";
 import { Ionicons } from "@expo/vector-icons";
 import { useTicketStore } from "../../../stores/ticketStore";
 import { useReminderStore } from "../../../stores/reminderStore";
+import { parseLocalDate } from "../../../utils/date";
 import {
   SUGGESTED_TRAVEL_ITEMS,
   ITEM_ICONS,
@@ -24,6 +26,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function ReminderSetupScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { ticketId } = useLocalSearchParams<{ ticketId: string }>();
 
@@ -58,7 +61,7 @@ export default function ReminderSetupScreen() {
     if (!ticket) return;
 
     // Parse departure date
-    const departureDate = new Date(ticket.travelDate);
+    const departureDate = parseLocalDate(ticket.travelDate);
     const timeParts = ticket.departureTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
     if (timeParts) {
       let hours = parseInt(timeParts[1], 10);
@@ -131,7 +134,7 @@ export default function ReminderSetupScreen() {
 
   const getPickerDate = () => {
     if (!ticket) return new Date();
-    const tDate = new Date(ticket.travelDate);
+    const tDate = parseLocalDate(ticket.travelDate);
     if (tDate.getTime() < Date.now()) {
       return new Date();
     }
@@ -146,7 +149,7 @@ export default function ReminderSetupScreen() {
 
   const getPickerMaxDate = () => {
     if (!ticket) return undefined;
-    const maxDate = new Date(ticket.travelDate);
+    const maxDate = parseLocalDate(ticket.travelDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (maxDate < today) {
@@ -195,7 +198,7 @@ export default function ReminderSetupScreen() {
 
       // Check if alarm is before departure
       if (ticket) {
-        const departureDate = new Date(ticket.travelDate);
+        const departureDate = parseLocalDate(ticket.travelDate);
         const timeParts = ticket.departureTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
         if (timeParts) {
           let hours = parseInt(timeParts[1], 10);
@@ -306,7 +309,9 @@ export default function ReminderSetupScreen() {
         await scheduleNotifications(reminderId);
       }
 
-      router.replace("/(tabs)/tickets" as any);
+      // Clear the book stack so it resets to index when the user returns
+      navigation.dispatch(StackActions.popToTop());
+      router.navigate("/(tabs)/tickets" as any);
     } catch (error) {
       console.error("Failed to save reminder:", error);
       Alert.alert("Error", "Failed to save your reminder. Please try again.");
@@ -316,7 +321,9 @@ export default function ReminderSetupScreen() {
   };
 
   const handleSkip = () => {
-    router.replace("/(tabs)/tickets" as any);
+    // Clear the book stack so it resets to index when the user returns
+    navigation.dispatch(StackActions.popToTop());
+    router.navigate("/(tabs)/tickets" as any);
   };
 
   if (!ticket) {
@@ -329,7 +336,7 @@ export default function ReminderSetupScreen() {
     );
   }
 
-  const travelDate = new Date(ticket.travelDate);
+  const travelDate = parseLocalDate(ticket.travelDate);
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     weekday: "short",
     month: "short",

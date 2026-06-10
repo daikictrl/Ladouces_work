@@ -1,9 +1,8 @@
 FIX THESE ISSUES:
 
-- There's an issue in the booking phase, precisely after payment when the ticket review appears and I have to eighter save or cancel ticket.
-    - When I click on `Save Tiket`, instead of it routing me to the `Tickets` tab, to see the ticket I just saved, it instead reroutes me back to the booking-phase start, which is not good. Also, when I click on `cancel` it doesn't clears the preveious session, instead it goes directly to the booking-start phase while the prevoious session is there.
+- During the booking phase, precisely when the ticket review appears, where I have to either save ticket or cancel.
+    - When I click on save ticket button, it successfully redirects me to `Tickets` page and the ticket is also successfully saved. However, the `Ticket Review` modal remains static in the `booking` page, where as I've already selected my option. It remains there until I click on cancel button which is not good. 
 
-    Fix:
-    When I click `Save Ticket`, I want it to route me to the `Tickets` tab and clear that particular booking session since the ticket is saved already. It should also do same thing when I click on cancel(Clear the current booking session and start a new one).
+    - I want the booking session to refresh or be cleared since the session is already completed, and the ticket is saved. 
 
-- There's an issue with alarm functionality in the `reminders` too. When I book a trip with and select the current date as the travel date, this will not permit me to set a reminder time for that particular date(current date)
+    - Also, this behavior is same for other tasks related to the booking session. When a session is complete the booking tab should automatically reset or be cleared.
