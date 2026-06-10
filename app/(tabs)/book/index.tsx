@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, View as RNView } from "react-native";
 import { View, Text, Pressable, ScrollView, TextInput } from "../../../components/tw";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -47,6 +47,17 @@ export default function BookIndex() {
   const [travelDate, setTravelDate] = useState<Date | null>(null);
   const [activeField, setActiveField] = useState<"from" | "to" | "date" | null>(null);
   const [citySearch, setCitySearch] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      const storeState = useBookingStore.getState();
+      if (!storeState.fromCity && !storeState.toCity && !storeState.travelDate) {
+        setFromCity("");
+        setToCity("");
+        setTravelDate(null);
+      }
+    }, [])
+  );
 
   const dateOptions = useMemo(() => {
     const today = new Date();

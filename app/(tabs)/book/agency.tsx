@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, Pressable } from "../../../components/tw";
@@ -24,11 +24,13 @@ export default function BookAgency() {
     selectedAgency?.id ?? ""
   );
 
-  useEffect(() => {
-    if (!fromCity || !toCity) {
-      router.replace("/(tabs)/book");
-    }
-  }, [fromCity, toCity, router]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!fromCity || !toCity) {
+        router.replace("/(tabs)/book");
+      }
+    }, [fromCity, toCity, router])
+  );
 
   const routeLabel = useMemo(
     () => `${fromCity} → ${toCity}`,

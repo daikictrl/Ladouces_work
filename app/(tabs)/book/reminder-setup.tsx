@@ -129,6 +129,32 @@ export default function ReminderSetupScreen() {
     setAlarms((prev) => prev.filter((a) => a.id !== alarmId));
   }, []);
 
+  const getPickerDate = () => {
+    if (!ticket) return new Date();
+    const tDate = new Date(ticket.travelDate);
+    if (tDate.getTime() < Date.now()) {
+      return new Date();
+    }
+    return tDate;
+  };
+
+  const getPickerMinDate = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  };
+
+  const getPickerMaxDate = () => {
+    if (!ticket) return undefined;
+    const maxDate = new Date(ticket.travelDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (maxDate < today) {
+      return today;
+    }
+    return maxDate;
+  };
+
   const handleOpenPicker = () => {
     setShowDatePicker(true);
   };
@@ -159,6 +185,35 @@ export default function ReminderSetupScreen() {
       finalDateTime.setMilliseconds(0);
 
       const timestamp = finalDateTime.getTime();
+
+      // Check if alarm time is in the future
+      if (timestamp <= Date.now()) {
+        Alert.alert("Invalid Time", "The reminder alarm must be set to a future time.");
+        setTempDate(null);
+        return;
+      }
+
+      // Check if alarm is before departure
+      if (ticket) {
+        const departureDate = new Date(ticket.travelDate);
+        const timeParts = ticket.departureTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+        if (timeParts) {
+          let hours = parseInt(timeParts[1], 10);
+          const minutes = parseInt(timeParts[2], 10);
+          const ampm = timeParts[3];
+          if (ampm) {
+            if (ampm.toUpperCase() === "PM" && hours !== 12) hours += 12;
+            if (ampm.toUpperCase() === "AM" && hours === 12) hours = 0;
+          }
+          departureDate.setHours(hours, minutes, 0, 0);
+        }
+
+        if (timestamp >= departureDate.getTime()) {
+          Alert.alert("Invalid Time", "The reminder alarm must be set before the departure time.");
+          setTempDate(null);
+          return;
+        }
+      }
 
       const formattedLabel = new Intl.DateTimeFormat("en-US", {
         month: "short",
@@ -521,7 +576,9 @@ export default function ReminderSetupScreen() {
           {/* DateTimePicker Modals */}
           {showDatePicker && (
             <DateTimePicker
-              value={new Date(ticket.travelDate)}
+              value={getPickerDate()}
+              minimumDate={getPickerMinDate()}
+              maximumDate={getPickerMaxDate()}
               mode="date"
               display="default"
               onChange={handleDateChange}

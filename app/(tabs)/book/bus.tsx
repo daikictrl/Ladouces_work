@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -65,18 +65,15 @@ export default function BookBus() {
   const [selectedBusId, setSelectedBusId] =
     useState<string>(selectedBus?.id ?? "");
 
-  useEffect(() => {
-    if (!fromCity || !toCity) {
-      router.replace("/(tabs)/book");
-    } else if (!selectedAgency) {
-      router.replace("/(tabs)/book/agency");
-    }
-  }, [
-    fromCity,
-    toCity,
-    selectedAgency,
-    router,
-  ]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!fromCity || !toCity) {
+        router.replace("/(tabs)/book");
+      } else if (!selectedAgency) {
+        router.replace("/(tabs)/book/agency");
+      }
+    }, [fromCity, toCity, selectedAgency, router])
+  );
 
   const routeLabel = `${fromCity} → ${toCity}`;
 

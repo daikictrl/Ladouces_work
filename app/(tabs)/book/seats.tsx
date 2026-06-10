@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, View as RNView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, Pressable } from "../../../components/tw";
@@ -41,11 +41,13 @@ export default function BookSeats() {
   const [selectedSeats, setLocalSelectedSeats] = useState<string[]>(storedSeats);
   const [feedback, setFeedback] = useState<string>("");
 
-  useEffect(() => {
-    if (!fromCity || !toCity) router.replace("/(tabs)/book");
-    else if (!selectedAgency) router.replace("/(tabs)/book/agency");
-    else if (!selectedBus) router.replace("/(tabs)/book/bus");
-  }, [fromCity, toCity, selectedAgency, selectedBus, router]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!fromCity || !toCity) router.replace("/(tabs)/book");
+      else if (!selectedAgency) router.replace("/(tabs)/book/agency");
+      else if (!selectedBus) router.replace("/(tabs)/book/bus");
+    }, [fromCity, toCity, selectedAgency, selectedBus, router])
+  );
 
   const allSeats = useMemo(() => {
     return getSeatRows().flatMap(({ row, columns }) => columns.map((column) => `${row}${column}`));

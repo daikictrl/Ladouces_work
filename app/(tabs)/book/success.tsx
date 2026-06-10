@@ -23,16 +23,31 @@ export default function BookSuccess() {
   const insets = useSafeAreaInsets();
   const { user } = useUser();
 
-  const fromCity = useBookingStore((state) => state.fromCity);
-  const toCity = useBookingStore((state) => state.toCity);
-  const travelDate = useBookingStore((state) => state.travelDate);
-  const selectedAgency = useBookingStore((state) => state.selectedAgency);
-  const selectedBus = useBookingStore((state) => state.selectedBus);
-  const selectedSeats = useBookingStore((state) => state.selectedSeats);
-  const totalPrice = useBookingStore((state) => state.totalPrice);
-  const paymentMethod = useBookingStore((state) => state.paymentMethod);
   const resetBooking = useBookingStore((state) => state.resetBooking);
   const addTicket = useTicketStore((state) => state.addTicket);
+
+  const {
+    fromCity,
+    toCity,
+    travelDate,
+    selectedAgency,
+    selectedBus,
+    selectedSeats,
+    totalPrice,
+    paymentMethod,
+  } = useMemo(() => {
+    const state = useBookingStore.getState();
+    return {
+      fromCity: state.fromCity,
+      toCity: state.toCity,
+      travelDate: state.travelDate,
+      selectedAgency: state.selectedAgency,
+      selectedBus: state.selectedBus,
+      selectedSeats: state.selectedSeats,
+      totalPrice: state.totalPrice,
+      paymentMethod: state.paymentMethod,
+    };
+  }, []);
 
   const formattedDate = useMemo(() => {
     if (!travelDate) return "";
